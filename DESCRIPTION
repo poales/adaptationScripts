@@ -1,0 +1,11 @@
+Package: adaptationScripts
+Title: personal use only
+Version: 0.0.0.9000
+Authors@R: person("Alan", "McClain", email = "mcclai54@msu.edu", role = c("aut", "cre"))
+Description: some shit
+Depends: R (>= 3.5.2)
+License: MIT
+Encoding: UTF-8
+LazyData: true
+Imports: tidyverse, magrittr
+RoxygenNote: 6.1.1
