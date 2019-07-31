@@ -24,13 +24,13 @@ collator <- function(ge,ecs,fop){
     aci_as[i] <- mean(data$A)
     aci_cis[i] <- mean(data$Ci)
   }
-  aci <- tibble("Ci" = aci_cis,"A" = aci_as,"Time" = times)
+  aci_table <- tibble("Ci" = aci_cis,"A" = aci_as,"Time" = times)
   
   ge %<>% select(-Ci,-contains("hhmmss"))
   fop %<>% select(-Fm,-Fs,-Fo,-NPQ)
   
   #plot the chosen A against the raw A/Time ####
-  testplot <- ggplot()+
+  aci_fit <- ggplot()+
     geom_point(timemelt(select(filter(ge,ge$A<35 & ge$A>-2.3),-gsw)),mapping=aes(x=Time,y=value))+
     geom_point(timemelt(select(aci,-Ci)),mapping=aes(x=Time,y=value,col="chosen points"))+
     theme_linedraw()+
@@ -45,7 +45,7 @@ collator <- function(ge,ecs,fop){
     ylab("A")+
     xlab("Ci")
   
-  myplot <- ggplot()+
+  expanded_table <- ggplot()+
     geom_point(timemelt(filter(ge,ge$A<30 & ge$A>-2.3)),mapping=aes(x=Time,y=value))+
     geom_point(timemelt(ecs),mapping=aes(x=Time,y=value))+
     geom_point(timemelt(fop),mapping=aes(x=Time,y=value))+
@@ -55,5 +55,5 @@ collator <- function(ge,ecs,fop){
           strip.text = element_text(color = "black"),
           legend.position = "none")+
     facet_wrap(~variable,scales="free_y")
-  return(list(myplot,aci,aciplot,testplot))
+  return(list(expanded_table,aci_table,aciplot,aci_fit))
 }
