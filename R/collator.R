@@ -32,14 +32,14 @@ collator <- function(ge,ecs,fop){
   #plot the chosen A against the raw A/Time ####
   aci_fit <- ggplot()+
     geom_point(timemelt(select(filter(ge,ge$A<35 & ge$A>-2.3),-gsw)),mapping=aes(x=Time,y=value))+
-    geom_point(timemelt(select(aci,-Ci)),mapping=aes(x=Time,y=value,col="chosen points"))+
+    geom_point(timemelt(select(aci_table,-Ci)),mapping=aes(x=Time,y=value,col="chosen points"))+
     theme_linedraw()+
     theme(strip.background = element_rect(fill = "white"),
           strip.text = element_text(color = "black"))+
     ylab("A")
   
   #plot the A/Ci ####
-  aciplot <- ggplot(aci,mapping=aes(x=Ci,y=A))+
+  aciplot <- ggplot(aci_table,mapping=aes(x=Ci,y=A))+
     geom_point()+
     theme_linedraw()+
     ylab("A")+
@@ -49,7 +49,7 @@ collator <- function(ge,ecs,fop){
     geom_point(timemelt(filter(ge,ge$A<30 & ge$A>-2.3)),mapping=aes(x=Time,y=value))+
     geom_point(timemelt(ecs),mapping=aes(x=Time,y=value))+
     geom_point(timemelt(fop),mapping=aes(x=Time,y=value))+
-    geom_point(timemelt(aci),mapping=aes(x=Time,y=value,col="red"))+
+    geom_point(timemelt(aci_table),mapping=aes(x=Time,y=value,col="red"))+
     theme_linedraw()+
     theme(strip.background = element_rect(fill = "white"),
           strip.text = element_text(color = "black"),
