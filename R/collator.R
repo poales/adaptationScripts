@@ -6,25 +6,32 @@
 #'@param fop the fluorescence data to use
 #'@name collator
 #'@export
-collator <- function(ge,ecs,fop){
+collator <- function(ge,ecs,fop,aci=NA){
   ge %<>% rename("Time" = elapsed)
   
-  
-  
-  #pull out the A and Ci values ####
-  times <- ecs$Time
-  l <- length(times)
-  aci_as <- 1:l
-  aci_cis <- 1:l
-  
-  for(i in 1:l){
-    time <- times[i]
-    data <- filter(ge,Time<time-5 & Time>time-20)
-    #print(data)
-    aci_as[i] <- mean(data$A)
-    aci_cis[i] <- mean(data$Ci)
+  if(is.na(aci)){
+    #pull out the A and Ci values ####
+    times <- ecs$Time
+    l <- length(times)
+    aci_as <- 1:l
+    aci_cis <- 1:l
+    
+    for(i in 1:l){
+      time <- times[i]
+      data <- filter(ge,Time<time-5 & Time>time-20)
+      #print(data)
+      aci_as[i] <- mean(data$A)
+      aci_cis[i] <- mean(data$Ci)
+    }
+    aci_table <- tibble("Ci" = aci_cis,"A" = aci_as,"Time" = times)
+  } else {
+    aci_table <- aci
+    if("gsw" %in% colnames(aci_table)){
+      aci_table <- select(aci_table, -gsw)
+    }
   }
-  aci_table <- tibble("Ci" = aci_cis,"A" = aci_as,"Time" = times)
+  
+  
   
   ge %<>% select(-Ci,-contains("hhmmss"))
   fop %<>% select(-Fm,-Fs,-Fo,-NPQ)
@@ -45,6 +52,7 @@ collator <- function(ge,ecs,fop){
     ylab("A")+
     xlab("Ci")
   
+  
   expanded_table <- ggplot()+
     geom_point(timemelt(filter(ge,ge$A<30 & ge$A>-2.3)),mapping=aes(x=Time,y=value))+
     geom_point(timemelt(ecs),mapping=aes(x=Time,y=value))+
@@ -55,5 +63,9 @@ collator <- function(ge,ecs,fop){
           strip.text = element_text(color = "black"),
           legend.position = "none")+
     facet_wrap(~variable,scales="free_y")
+  
+  
+    
   return(list(expanded_table,aci_table,aciplot,aci_fit))
+  
 }
